@@ -173,25 +173,25 @@ module.exports = {
 
   async askAssistant(content, assistant_id, thread_id=null){
     const thread = thread_id == null ? await this.newThread() : await this.getThread(thread_id);
-    await addMessage(content, thread.id);
-    const run_id = await startRun(thread.id, assistant_id).then((run) => run.id);
-    const response = await checkThread(thread.id, run_id);
+    await this.addMessage(content, thread.id);
+    const run_id = await this.newRun(thread.id, assistant_id).then((run) => run.id);
+    const response = await this.checkThread(thread.id, run_id);
     return [response, thread.id];
   },
 
   async checkThread(thread_id, run_id, attempts=60){
     while (attempts > 0) {
-      console.log("Checking thread - attempts left: " + attempts + "");
+      console.log("Checking thread - attempts left: " + attempts);
       const last_step_id = await this.listRunSteps(run_id, thread_id).then((steps) => steps.body.first_id);
       if (!(last_step_id == null)) {
         const step = await this.getRunStep(run_id, last_step_id, thread_id);
         if (step.status === "completed") {
-          const message = await this.getMessage(step.step_details.message_creation.message_id, thread_id);
+          const message = await this.getMessage(message_id=step.step_details.message_creation.message_id, thread_id);
           return message.content[0].text.value
         }
       }
       attempts--;
-      await new Promise(resolvesetTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
     return "No response";
   },
