@@ -8,29 +8,29 @@ module.exports = {
       return new OpenAI({apiKey:apiKey, organisation:organisation});
   },
 
-  async listModels(client=this.getClient()){
+  async listModels(client=systemClient){
     const list = await client.models.list();
     return list;
   },
 
-  async newThread(client=this.getClient()){
+  async newThread(client=systemClient){
     const emptyThread = await client.beta.threads.create();
     return emptyThread;
   },
 
-  async getThread(thread_id, client=this.getClient()){
+  async getThread(thread_id, client=systemClient){
     const thread = await client.beta.threads.retrieve(thread_id);
     return thread;
   },
 
-  async listMessages(thread_id, client=this.getClient()){
+  async listMessages(thread_id, client=systemClient){
     const response = await client.beta.threads.messages.list(
       thread_id
     );
     return response;
   },
 
-  async getMessage(message_id, thread_id, client=this.getClient()){
+  async getMessage(message_id, thread_id, client=systemClient){
     const message = await client.beta.threads.messages.retrieve(
       thread_id, 
       message_id
@@ -38,7 +38,7 @@ module.exports = {
     return message;
   },
 
-  async addMessage(content, thread_id, client=this.getClient()){
+  async addMessage(content, thread_id, client=systemClient){
     const response = await client.beta.threads.messages.create(
       thread_id,
       { role: "user", content: content }
@@ -46,7 +46,7 @@ module.exports = {
     return response;
   },
 
-  async newRun(thread_id, assistant_id=process.env.ASSISTANT_ID, client=this.getClient()){
+  async newRun(thread_id, assistant_id=process.env.ASSISTANT_ID, client=systemClient){
     const run = await client.beta.threads.runs.create(
       thread_id,
       { assistant_id: assistant_id }
@@ -54,14 +54,14 @@ module.exports = {
     return run;
   },
 
-  async listRuns(thread_id, client=this.getClient()){
+  async listRuns(thread_id, client=systemClient){
     const runs = await client.beta.threads.runs.list(
       thread_id
     );
     return runs;
   },
 
-  async getRun(run_id, thread_id, client=this.getClient()){
+  async getRun(run_id, thread_id, client=systemClient){
     const run = await client.beta.threads.runs.retrieve(
       thread_id, 
       run_id
@@ -69,7 +69,7 @@ module.exports = {
     return run;
   },
 
-  async listRunSteps(run_id, thread_id, client=this.getClient()){
+  async listRunSteps(run_id, thread_id, client=systemClient){
     const runSteps = await client.beta.threads.runs.steps.list(
       thread_id,
       run_id
@@ -77,7 +77,7 @@ module.exports = {
     return runSteps;
   },
 
-  async getRunStep(run_id, step_id, thread_id, client=this.getClient()){
+  async getRunStep(run_id, step_id, thread_id, client=systemClient){
     const runStep = await client.beta.threads.runs.steps.retrieve(
       thread_id,
       run_id,
@@ -93,6 +93,7 @@ module.exports = {
     max_tokens=4096,
     n=1,
     temperature=0.8,
+    client=systemClient
     ) =>
     {
       const response = await client.chat.completions.create({
@@ -114,7 +115,7 @@ module.exports = {
     max_tokens=4096,
     n=1,
     temperature=0.8,
-    client=this.getClient())
+    client=systemClient)
     {
       const response = await client.chat.completions.create({
         messages: [{role: "system", content: system_instructions},
@@ -135,7 +136,7 @@ module.exports = {
     max_tokens=4096,
     n=1,
     temperature=0.8,
-    client=this.getClient())
+    client=systemClient)
     {
       const response = await client.chat.completions.create({
         messages: [...messages,
@@ -156,7 +157,7 @@ module.exports = {
     max_tokens=4096,
     n=1,
     temperature=0.8,
-    client=this.getClient())
+    client=systemClient)
     {
       const response = await client.chat.completions.create({
         messages: [{role: "user", content: `<system_instructions>${system_instructions}</system_instructions>`},
@@ -196,4 +197,4 @@ module.exports = {
   },
 }
 
-const client = module.exports.getClient();
+const systemClient = module.exports.getClient();
