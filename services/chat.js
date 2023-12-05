@@ -47,3 +47,16 @@ module.exports = {
     return completion;
   }
 };
+
+async function main() {
+  const thread = await module.exports.newThread();
+  const system_instructions = "You are a grumpy old sailor. We are both in a restaurant and I just spilled your coffee." +
+                              "Don't break character, read the entire conversation history and respond succintly, be in the moment.";
+  const content = "Hey there, sorry I didn't see you there. I'll get you a new coffee.";
+  const response = await module.exports.addChatResponse(content, system_instructions, thread.insertedId);
+  console.log(response);
+}
+
+if (require.main === module) {
+  main();
+}
