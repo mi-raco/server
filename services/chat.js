@@ -19,21 +19,31 @@ module.exports = {
   },
 
   async createCompletion(
-  system_instructions,
-  thread_id,
-  openai=openaiAPI,
-  data=dataAPI) {
+            system_instructions,
+            thread_id,
+            openAICompletion,
+            data=dataAPI) {
     const filter={"_id": {"$oid": thread_id }}
     const thread = await data.findOne(collection="threads", filter).then((response) => response.document);
-    const completion = await openai.completionSystemLast(
+    const completion = await openAICompletion(
       system_instructions,
-      messages=thread.messages
+      thread.messages
     )
     await this.addMessage(
       message=completion,
       role="assistant",
       thread_id=thread_id
     )
+    return completion;
+  },
+
+  async addChatResponse(content, system_instructions, thread_id) {
+    await this.addMessage(content, "user", thread_id);
+    const completion = await this.createCompletion(
+      system_instructions,
+      thread_id,
+      openaiAPI.completionSystemLast
+    );
     return completion;
   }
 };

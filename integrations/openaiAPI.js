@@ -5,10 +5,7 @@ module.exports = {
   getClient(
     apiKey=process.env.OPENAI_API_KEY,
     organisation=process.env.ORGANIZATION_ID) { 
-      return new OpenAI({
-        apiKey: apiKey,
-        organization: organisation
-      })
+      return new OpenAI({apiKey:apiKey, organisation:organisation});
   },
 
   async listModels(client=this.getClient()){
@@ -89,19 +86,17 @@ module.exports = {
     return runStep;
   },
 
-  async completionSystemLast(
-    user_input,
+  completionSystemLast: async (
     system_instructions,
     messages=[],
     model="gpt-4-1106-preview",
     max_tokens=4096,
     n=1,
     temperature=0.8,
-    client=this.getClient())
+    ) =>
     {
       const response = await client.chat.completions.create({
         messages: [...messages,
-                  {role: "user", content: user_input},
                   {role: "system", content: system_instructions}],
         model: model,
         max_tokens: max_tokens,
@@ -113,7 +108,6 @@ module.exports = {
   },
 
   async completionSystemFirst(
-    user_input,
     system_instructions,
     messages=[],
     model="gpt-4-1106-preview",
@@ -124,8 +118,7 @@ module.exports = {
     {
       const response = await client.chat.completions.create({
         messages: [{role: "system", content: system_instructions},
-                  ...messages,
-                  {role: "user", content: user_input}],
+                  ...messages],
         model: model,
         max_tokens: max_tokens,
         n: n,
@@ -136,7 +129,6 @@ module.exports = {
   },
 
   async completionSystemInUserLast(
-    user_input,
     system_instructions,
     messages=[],
     model="gpt-4-1106-preview",
@@ -147,7 +139,7 @@ module.exports = {
     {
       const response = await client.chat.completions.create({
         messages: [...messages,
-                  {role: "user", content: `<user_input>${user_input}</user_input>,<system_instructions>${system_instructions}</system_instructions>`}],
+                  {role: "user", content: `<system_instructions>${system_instructions}</system_instructions>`}],
         model: model,
         max_tokens: max_tokens,
         n: n,
@@ -158,7 +150,6 @@ module.exports = {
   },
 
   async completionSystemInUserFirst(
-    user_input,
     system_instructions,
     messages=[],
     model="gpt-4-1106-preview",
@@ -169,8 +160,7 @@ module.exports = {
     {
       const response = await client.chat.completions.create({
         messages: [{role: "user", content: `<system_instructions>${system_instructions}</system_instructions>`},
-                  ...messages,
-                  {role: "user", content: `<user_input>${user_input}</user_input>`}],
+                  ...messages],
         model: model,
         max_tokens: max_tokens,
         n: n,
@@ -205,3 +195,5 @@ module.exports = {
     return "No response";
   },
 }
+
+const client = module.exports.getClient();
