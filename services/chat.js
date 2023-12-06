@@ -1,5 +1,5 @@
-const openaiAPI = require('../integrations/openaiAPI');
-const dataAPI = require('../integrations/mongoDataAPI');
+const openaiAPI = require('../services/openaiAPI');
+const dataAPI = require('../services/mongoDataAPI');
 const readline = require('readline');
 
 module.exports = {
