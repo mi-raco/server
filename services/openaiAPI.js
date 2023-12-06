@@ -179,14 +179,16 @@ module.exports = {
     return [response, thread.id];
   },
 
-  async checkThread(thread_id, run_id, attempts=60){
+  async checkThread(thread_id, run_id, attempts=90){
     while (attempts > 0) {
       console.log("Checking thread - attempts left: " + attempts);
-      const last_step_id = await this.listRunSteps(run_id, thread_id).then((steps) => steps.body.first_id);
+      const steps = await this.listRunSteps(run_id, thread_id);
+      const last_step_id = steps.body.first_id;
       if (!(last_step_id == null)) {
         const step = await this.getRunStep(run_id, last_step_id, thread_id);
+        const message_id = step.step_details.message_creation.message_id;
         if (step.status === "completed") {
-          const message = await this.getMessage(message_id=step.step_details.message_creation.message_id, thread_id);
+          const message = await this.getMessage(message_id, thread_id);
           return message.content[0].text.value
         }
       }
