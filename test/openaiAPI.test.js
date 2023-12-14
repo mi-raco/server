@@ -2,7 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 const { OpenAI } = require('openai');
-const { getClient, listModels } = require('../services/openaiAPI');
+const { getClient, listModels } = require('@integrations/openaiAPI');
 
 describe('OpenAI API functions', () => {
   let mockClient;

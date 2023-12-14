@@ -1,9 +1,9 @@
-const openaiAPI = require('../services/openaiAPI');
-const dataAPI = require('../services/mongoDataAPI');
+const openaiAPI = require('@integrations/openaiAPI');
+const dataAPI = require('@integrations/mongoDataAPI');
 const readline = require('readline');
 
 module.exports = {
-  async addMessage(content, role, thread_id, data=dataAPI) {
+  async addMessageToThread(content, role, thread_id, data=dataAPI) {
     const filter={"_id": {"$oid": thread_id }}
     const thread = await data.findOne(collection="threads", filter);
     thread.document.messages.push({content,role});
@@ -19,14 +19,14 @@ module.exports = {
     return response;
   },
 
-  async createCompletion(
+  async requestCompletion(
             system_instructions,
             thread_id,
-            openAICompletion,
+            openAICompletionStrategy,
             data=dataAPI) {
     const filter={"_id": {"$oid": thread_id }}
     const thread = await data.findOne(collection="threads", filter).then((response) => response.document);
-    const completion = await openAICompletion(
+    const completion = await openAICompletionStrategy(
       system_instructions,
       thread.messages
     )

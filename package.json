@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "node ./dist/bin/www",
+    "build": "tsc",
+    "dev": "ts-node ./bin/www",
     "test": "mocha"
   },
   "dependencies": {
@@ -23,6 +25,8 @@
     "chai": "^4.3.10",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "sinon": "^17.0.1"
+    "sinon": "^17.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   }
 }

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var openaiAPI = require('../services/openaiAPI');
+var openaiAPI = require('@integrations/openaiAPI');
 
 router.use(express.json()); // Middleware for parsing JSON bodies
 

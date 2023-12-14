@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
-const mongoDB = require('../services/mongoDataAPI');
+const mongoDB = require('@integrations/mongoDataAPI');
 require('dotenv').config();
 
 describe('MongoDB Data API functions', () => {
