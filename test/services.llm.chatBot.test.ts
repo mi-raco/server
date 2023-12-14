@@ -1,12 +1,12 @@
 import { expect } from './testSetup'
-import { chatBot } from '../services/llm/chatBot';
+import chatBot from '../services/llm/chatBot';
 
 describe('chat service', () => {
   it('adds a message to a thread', async () => {
     const newThread = await chatBot.newThread();
     const message = "Hello World";
     const role = "user";
-    const response = await chatBot.addMessage(
+    const response = await chatBot.addMessageToThread(
       message,
       role,
       newThread.insertedId

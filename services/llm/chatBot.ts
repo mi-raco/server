@@ -41,7 +41,9 @@ export default {
     content: string, 
     system_instructions: string, 
     thread_id: string, 
-    openAICompletionStrategy: Function) {
+    openAICompletionStrategy?: Function
+    ){
+    openAICompletionStrategy = openAICompletionStrategy ?? openaiAPI.completionSystemFirst;
     await this.addMessageToThread(content, "user", thread_id);
     const completion = await this.requestCompletion(
       system_instructions,
