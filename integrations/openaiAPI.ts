@@ -10,7 +10,7 @@ function getClient(
 
 const systemClient = getClient();
 
-module.exports = {
+export default {
   async listModels(
     client=systemClient
   ){
@@ -213,14 +213,14 @@ module.exports = {
   },
 
   async askAssistant(
-    content: string, 
-    assistant_id: string, 
+    content: string,
+    assistant_id: string,
     thread_id=null
   ){
-    const thread = thread_id == null ? await this.newThread() : await this.getThread(thread_id);
-    await this.addMessage(content, thread.id);
-    const run_id = await this.newRun(thread.id, assistant_id).then((run: { id: any; }) => run.id);
-    const response = await this.checkThread(thread.id, run_id);
+    const thread = thread_id == null ? await module.exports.newThread() : await module.exports.getThread(thread_id);
+    await module.exports.addMessage(content, thread.id);
+    const run_id = await module.exports.newRun(thread.id, assistant_id).then((run: { id: any; }) => run.id);
+    const response = await module.exports.checkThread(thread.id, run_id);
     return [response, thread.id];
   },
 
@@ -231,13 +231,13 @@ module.exports = {
   ){
     while (attempts > 0) {
       console.log("Checking thread - attempts left: " + attempts);
-      const steps = await this.listRunSteps(run_id, thread_id);
+      const steps = await module.exports.listRunSteps(run_id, thread_id);
       const last_step_id = steps.body.first_id;
       if (!(last_step_id == null)) {
-        const step = await this.getRunStep(run_id, last_step_id, thread_id);
+        const step = await module.exports.getRunStep(run_id, last_step_id, thread_id);
         const message_id = step.step_details.message_creation.message_id;
         if (step.status === "completed") {
-          const message = await this.getMessage(message_id, thread_id);
+          const message = await module.exports.getMessage(message_id, thread_id);
           return message.content[0].text.value
         }
       }

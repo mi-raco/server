@@ -112,7 +112,7 @@ export default {
     collection: string,
     filter: Record<string, unknown>,
     update: Record<string, unknown>,
-    upsert: boolean
+    upsert?: boolean
     ) {
       const path = '/action/updateOne';
       const body: RequestData = {

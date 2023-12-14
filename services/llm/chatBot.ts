@@ -1,11 +1,16 @@
-const openaiAPI = require('@integrations/openaiAPI');
-const dataAPI = require('@integrations/mongoDataAPI');
+import openaiAPI from '../../integrations/openaiAPI';
+import dataAPI from '../../integrations/mongoDataAPI';
 const readline = require('readline');
 
-module.exports = {
-  async addMessageToThread(content, role, thread_id, data=dataAPI) {
+export default {
+  async addMessageToThread(
+    content: string, 
+    role: string, 
+    thread_id: string, 
+    data=dataAPI
+    ){
     const filter={"_id": {"$oid": thread_id }}
-    const thread = await data.findOne(collection="threads", filter);
+    const thread = await data.findOne("threads", filter);
     thread.document.messages.push({content,role});
     const update = {"$set": {"messages": thread.document.messages}};
     const response = await data.updateOne('threads', filter, update);
@@ -20,30 +25,28 @@ module.exports = {
   },
 
   async requestCompletion(
-            system_instructions,
-            thread_id,
-            openAICompletionStrategy,
-            data=dataAPI) {
+    system_instructions: string,
+    thread_id: string,
+    openAICompletionStrategy: Function,
+    data=dataAPI
+    ){
     const filter={"_id": {"$oid": thread_id }}
-    const thread = await data.findOne(collection="threads", filter).then((response) => response.document);
-    const completion = await openAICompletionStrategy(
-      system_instructions,
-      thread.messages
-    )
-    await this.addMessage(
-      message=completion,
-      role="assistant",
-      thread_id=thread_id
-    )
+    const thread = await data.findOne("threads", filter).then((response) => response.document);
+    const completion = await openAICompletionStrategy(system_instructions, thread.messages)
+    await this.addMessageToThread(completion, "assistant", thread_id)
     return completion;
   },
 
-  async addChatResponse(content, system_instructions, thread_id, openAICompletion) {
-    await this.addMessage(content, "user", thread_id);
-    const completion = await this.createCompletion(
+  async addChatResponse(
+    content: string, 
+    system_instructions: string, 
+    thread_id: string, 
+    openAICompletionStrategy: Function) {
+    await this.addMessageToThread(content, "user", thread_id);
+    const completion = await this.requestCompletion(
       system_instructions,
       thread_id,
-      openAICompletion
+      openAICompletionStrategy
     );
     return completion;
   }
@@ -63,7 +66,7 @@ async function main() {
                             "The length of your answer should be chosen to be any number of words in the 7-40 range, with an average of 10, as the situation requires. ";
   rl.setPrompt('\nLearner: ');
   rl.prompt();
-  rl.on('line', async (userInput) => {
+  rl.on('line', async (userInput: string) => {
     const response = await module.exports.addChatResponse(userInput, system_instructions, thread.insertedId, openaiAPI.completionSystemFirst);
     console.log('\nAssistant: ' + response);
     rl.prompt();
