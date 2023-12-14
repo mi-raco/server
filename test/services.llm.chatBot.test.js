@@ -1,4 +1,4 @@
-import { expect, sinon } from './testSetup';
+const { expect } = require('./testSetup')
 const chatBot = require('@services/llm/chatBot.js');
 
 describe('chat service', () => {

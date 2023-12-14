@@ -140,7 +140,7 @@ export default {
 
   async deleteOne(
     collection: string, 
-    filter: Record<string, unknown>
+    filter?: Record<string, unknown>
     ) {
       const path = '/action/deleteOne';
       const body: RequestData = {

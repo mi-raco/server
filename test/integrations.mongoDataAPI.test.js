@@ -1,5 +1,6 @@
-import { expect, sinon } from './testSetup';
-import mongoDB from '@integrations/mongoDataAPI';
+const { expect } = require('./testSetup')
+
+const mongoDB = require('@integrations/mongoDataAPI');
 
 describe('MongoDB Data API functions', () => {
   it('findOne returns something', async () => {
@@ -19,8 +20,7 @@ describe('MongoDB Data API functions', () => {
 
   it('deleteOne deletes a document', async () => {
     const response = await mongoDB.deleteOne(
-      collection="threads",
-      filter={}
+      "threads",
     );
     console.log(response);
     expect(response).to.exist;

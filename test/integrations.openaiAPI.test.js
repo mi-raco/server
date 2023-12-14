@@ -1,4 +1,5 @@
-import { expect, sinon } from './testSetup';
+const { expect } = require('./testSetup')
+
 const { OpenAI } = require('openai');
 const openaiAPI = require('@integrations/openaiAPI');
 
