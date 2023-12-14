@@ -1,5 +1,5 @@
-const { expect } = require('./testSetup')
-const chatBot = require('@services/llm/chatBot.js');
+import { expect } from './testSetup'
+import { chatBot } from '../services/llm/chatBot';
 
 describe('chat service', () => {
   it('adds a message to a thread', async () => {

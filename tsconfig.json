@@ -6,12 +6,6 @@
     "outDir": "./dist",
     "strict": true,
     "moduleResolution": "node",
-    "esModuleInterop": true,
-    "baseUrl": ".",
-    "paths": {
-      "@integrations/*": ["./integrations/*"],
-      "@services/*": ["./services/*"],
-      "@models/*": ["./models/*"],
-    }
+    "esModuleInterop": true
   }
 }

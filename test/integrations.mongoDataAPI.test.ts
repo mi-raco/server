@@ -1,6 +1,5 @@
-const { expect } = require('./testSetup')
-
-const mongoDB = require('@integrations/mongoDataAPI');
+import { expect } from './testSetup'
+const mongoDB = require('../integrations/mongoDataAPI').default;
 
 describe('MongoDB Data API functions', () => {
   it('findOne returns something', async () => {
