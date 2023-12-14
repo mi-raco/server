@@ -1,15 +1,15 @@
 import { expect } from './testSetup'
-const mongoDB = require('../integrations/mongoDataAPI').default;
+import dataAPI from '../integrations/mongoDataAPI';
 
 describe('MongoDB Data API functions', () => {
   it('findOne returns something', async () => {
-    const response = await mongoDB.findOne("threads");
+    const response = await dataAPI.findOne("threads");
     console.log(response);
     expect(response).to.exist;
   });
 
   it('insertOne inserts a new document', async () => {
-    const response = await mongoDB.insertOne(
+    const response = await dataAPI.insertOne(
       "threads",
       {"title": "Test Title", "author": "Test Author"}
     );
@@ -18,7 +18,7 @@ describe('MongoDB Data API functions', () => {
   });
 
   it('deleteOne deletes a document', async () => {
-    const response = await mongoDB.deleteOne(
+    const response = await dataAPI.deleteOne(
       "threads",
     );
     console.log(response);
