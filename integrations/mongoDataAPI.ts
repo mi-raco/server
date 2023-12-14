@@ -1,7 +1,22 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
 dotenv.config();
-import { RequestData, Document } from './models';
+
+interface RequestData {
+  dataSource?: string;
+  database?: string;
+  collection: string;
+  filter?: Record<string, unknown>;
+  projection?: Record<string, unknown>;
+  sort?: Record<string, unknown>;
+  limit?: number;
+  skip?: number;
+  document?: Record<string, unknown>;
+  documents?: Record<string, unknown>[];
+  update?: Record<string, unknown>;
+  upsert?: boolean;
+  pipeline?: Record<string, unknown>[];
+}
 
 const BASE_URL: string = process.env.MONGO_DATA_API_BASE_URL || '';
 const API_KEY: string = process.env.MONGO_DATA_API_KEY || '';
@@ -32,8 +47,8 @@ async function makeRequest(path: string, data: RequestData) {
 export default {
   async findOne(
     collection: string, 
-    filter?: object, 
-    projection?: object
+    filter?: Record<string, unknown>, 
+    projection?: Record<string, unknown>
     ) {
       const path = '/action/findOne';
       const body: RequestData = {
@@ -46,9 +61,9 @@ export default {
 
   async find(
     collection: string, 
-    filter: object, 
-    projection: object, 
-    sort: object, 
+    filter: Record<string, unknown>, 
+    projection: Record<string, unknown>, 
+    sort: Record<string, unknown>, 
     limit: number, 
     skip: number
     ) {
@@ -64,9 +79,9 @@ export default {
       return makeRequest(path, body);
     },
 
-  async insertOne<Doc extends Document>(
-    collection: string, 
-    document: Doc
+  async insertOne(
+    collection: string,
+    document: Record<string, unknown>
     ) {
       const path = '/action/insertOne';
       document = document || {};
@@ -78,9 +93,9 @@ export default {
       return makeRequest(path, body);
     },
 
-  async insertMany<Doc extends Document>(
-    collection: string, 
-    documents: Doc[]
+  async insertMany(
+    collection: string,
+    documents: Record<string, unknown>[]
     ) {
       const path = '/action/insertMany';
       documents.forEach((document) => {
@@ -95,8 +110,8 @@ export default {
 
   async updateOne(
     collection: string,
-    filter: object,
-    update: object,
+    filter: Record<string, unknown>,
+    update: Record<string, unknown>,
     upsert: boolean
     ) {
       const path = '/action/updateOne';
@@ -111,8 +126,8 @@ export default {
 
   async updateMany(
     collection: string, 
-    filter: object, 
-    update: object
+    filter: Record<string, unknown>, 
+    update: Record<string, unknown>
     ) {
       const path = '/action/updateMany';
       const body: RequestData = {
@@ -125,7 +140,7 @@ export default {
 
   async deleteOne(
     collection: string, 
-    filter: object
+    filter: Record<string, unknown>
     ) {
       const path = '/action/deleteOne';
       const body: RequestData = {
@@ -137,7 +152,7 @@ export default {
 
   async deleteMany(
     collection: string, 
-    filter: object
+    filter: Record<string, unknown>
     ) {
       const path = '/action/deleteMany';
       const body: RequestData = {
@@ -149,7 +164,7 @@ export default {
 
   async aggregate(
     collection: string, 
-    pipeline: object[]
+    pipeline: Record<string, unknown>[]
     ) {
       const path = '/action/aggregate';
       const body: RequestData = {

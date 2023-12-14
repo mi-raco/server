@@ -3,17 +3,15 @@ import mongoDB from '@integrations/mongoDataAPI';
 
 describe('MongoDB Data API functions', () => {
   it('findOne returns something', async () => {
-    const response = await mongoDB.findOne(
-      collection="threads"
-    );
+    const response = await mongoDB.findOne("threads");
     console.log(response);
     expect(response).to.exist;
   });
 
   it('insertOne inserts a new document', async () => {
     const response = await mongoDB.insertOne(
-      collection="threads",
-      document={"title": "Test Title", "author": "Test Author"}
+      "threads",
+      {"title": "Test Title", "author": "Test Author"}
     );
     console.log(response);
     expect(response).to.exist;
