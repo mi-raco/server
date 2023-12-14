@@ -1,10 +1,9 @@
-import sinon from 'sinon';
-import { expect } from './testSetup'
-const { OpenAI } = require('openai');
-const openaiAPI = require('../integrations/openaiAPI');
+import { expect, sinon } from './testSetup'
+import { OpenAI } from 'openai';
+import openaiAPI from '../integrations/openaiAPI';
 
 describe('OpenAI API functions', () => {
-  let mockClient: typeof OpenAI;
+  let mockClient: OpenAI;
 
   beforeEach(() => {
     mockClient = new OpenAI({

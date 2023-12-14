@@ -142,6 +142,7 @@ export default {
     collection: string, 
     filter?: Record<string, unknown>
     ) {
+      filter = filter ?? {};
       const path = '/action/deleteOne';
       const body: RequestData = {
         collection,
