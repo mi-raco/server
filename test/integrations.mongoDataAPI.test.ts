@@ -1,8 +1,5 @@
-const chai = require('chai');
-const expect = chai.expect;
-const sinon = require('sinon');
-const mongoDB = require('@integrations/mongoDataAPI');
-require('dotenv').config();
+import { expect, sinon } from './testSetup';
+import mongoDB from '@integrations/mongoDataAPI';
 
 describe('MongoDB Data API functions', () => {
   it('findOne returns something', async () => {

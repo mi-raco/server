@@ -10,7 +10,8 @@
     "baseUrl": ".",
     "paths": {
       "@integrations/*": ["./integrations/*"],
-      "@services/*": ["./services/*"]
+      "@services/*": ["./services/*"],
+      "@models/*": ["./models/*"],
     }
   }
 }

@@ -1,12 +1,12 @@
-// mongoDataAPI.js
-const axios = require('axios');
-require('dotenv').config();
+import axios from 'axios';
+import dotenv from 'dotenv';
+dotenv.config();
+import { RequestData, Document } from './models';
 
-const BASE_URL = process.env.MONGO_DATA_API_BASE_URL;
-const API_KEY = process.env.MONGO_DATA_API_KEY;
+const BASE_URL: string = process.env.MONGO_DATA_API_BASE_URL || '';
+const API_KEY: string = process.env.MONGO_DATA_API_KEY || '';
 
-// Helper function to make an API request
-async function makeRequest(path, data) {
+async function makeRequest(path: string, data: RequestData) {
   const url = `${BASE_URL}${path}`;
   const headers = {
     'Content-Type': 'application/json',
@@ -24,104 +24,138 @@ async function makeRequest(path, data) {
   try {
     const response = await axios(options);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(`API request failed with status ${error.response.status}: ${error.message}`);
   }
 }
 
-// Define functions for each endpoint
-module.exports = {
-  async findOne(collection, filter, projection) {
-    const path = '/action/findOne';
-    const body = {
-      collection,
-      filter,
-      projection
-    };
-    return makeRequest(path, body);
+export default {
+  async findOne(
+    collection: string, 
+    filter?: object, 
+    projection?: object
+    ) {
+      const path = '/action/findOne';
+      const body: RequestData = {
+        collection,
+        filter,
+        projection
+      };
+      return makeRequest(path, body);
+    },
+
+  async find(
+    collection: string, 
+    filter: object, 
+    projection: object, 
+    sort: object, 
+    limit: number, 
+    skip: number
+    ) {
+      const path = '/action/find';
+      const body: RequestData = {
+        collection,
+        filter,
+        projection,
+        sort,
+        limit,
+        skip
+      };
+      return makeRequest(path, body);
+    },
+
+  async insertOne<Doc extends Document>(
+    collection: string, 
+    document: Doc
+    ) {
+      const path = '/action/insertOne';
+      document = document || {};
+      document.created_at = new Date().toISOString();
+      const body: RequestData = {
+        collection,
+        document
+      };
+      return makeRequest(path, body);
+    },
+
+  async insertMany<Doc extends Document>(
+    collection: string, 
+    documents: Doc[]
+    ) {
+      const path = '/action/insertMany';
+      documents.forEach((document) => {
+        document.created_at = new Date().toISOString();
+      });
+      const body: RequestData = {
+        collection,
+        documents
+      };
+      return makeRequest(path, body);
   },
 
-  async find(collection, filter, projection, sort, limit, skip) {
-    const path = '/action/find';
-    const body = {
-      collection,
-      filter,
-      projection,
-      sort,
-      limit,
-      skip
-    };
-    return makeRequest(path, body);
-  },
+  async updateOne(
+    collection: string,
+    filter: object,
+    update: object,
+    upsert: boolean
+    ) {
+      const path = '/action/updateOne';
+      const body: RequestData = {
+        collection,
+        filter,
+        update,
+        upsert
+      };
+      return makeRequest(path, body);
+    },
 
-  async insertOne(collection, document) {
-    const path = '/action/insertOne';
-    document = document || {};
-    document.created_at=new Date().toISOString();
-    const body = {
-      collection,
-      document
-    };
-    return makeRequest(path, body);
-  },
+  async updateMany(
+    collection: string, 
+    filter: object, 
+    update: object
+    ) {
+      const path = '/action/updateMany';
+      const body: RequestData = {
+        collection,
+        filter,
+        update
+      };
+      return makeRequest(path, body);
+    },
 
-  async insertMany(collection, documents) {
-    const path = '/action/insertMany';
-    documents.forEach((document) => {
-      document.created_at=new Date().toISOString();
-    });
-    const body = {
-      collection,
-      documents
-    };
-    return makeRequest(path, body);
-  },
+  async deleteOne(
+    collection: string, 
+    filter: object
+    ) {
+      const path = '/action/deleteOne';
+      const body: RequestData = {
+        collection,
+        filter
+      };
+      return makeRequest(path, body);
+    },
 
-  async updateOne(collection, filter, update, upsert) {
-    const path = '/action/updateOne';
-    const body = {
-      collection,
-      filter,
-      update,
-      upsert
-    };
-    return makeRequest(path, body);
-  },
+  async deleteMany(
+    collection: string, 
+    filter: object
+    ) {
+      const path = '/action/deleteMany';
+      const body: RequestData = {
+        collection,
+        filter
+      };
+      return makeRequest(path, body);
+    },
 
-  async updateMany(collection, filter, update) {
-    const path = '/action/updateMany';
-    const body = {
-      collection,
-      filter,
-      update
-    };
-    return makeRequest(path, body);
-  },
-
-  async deleteOne(collection, filter) {
-    const path = '/action/deleteOne';
-    const body = {
-      collection,
-      filter
-    };
-    return makeRequest(path, body);
-  },
-
-  async deleteMany(collection, filter) {
-    const path = '/action/deleteMany';
-    const body = {
-      collection,
-      filter
-    };
-    return makeRequest(path, body);
-  },
-
-  async aggregate(collection, pipeline) {
-    const path = '/action/aggregate';
-    const body = {
-      collection,
-      pipeline
-    };
-    return makeRequest(path, body);
-  }
+  async aggregate(
+    collection: string, 
+    pipeline: object[]
+    ) {
+      const path = '/action/aggregate';
+      const body: RequestData = {
+        collection,
+        pipeline
+      };
+      return makeRequest(path, body);
+    }
 };
