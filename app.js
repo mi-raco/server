@@ -6,7 +6,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
+var viewRouter = require('./routes/view');
 var openaiRouter = require('./routes/openai');
 var apiRouter = require('./routes/api');
 
@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+app.use('/', viewRouter);
 app.use('/openai', openaiRouter);
 app.use('/api', apiRouter);
 
