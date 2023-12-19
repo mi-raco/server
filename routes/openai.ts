@@ -1,15 +1,12 @@
-var express = require('express');
-var router = express.Router();
-var openaiAPI = require('@integrations/openaiAPI');
+import express, { Request, Response } from 'express';
+import openaiAPI from '../integrations/openaiAPI';
 
-router.use(express.json()); // Middleware for parsing JSON bodies
-
-router.post('/askAssistant', async function(req, res, next) {
-  const content = req.body.content;
-  const assistant_id = req.body.assistant_id;
-  const thread_id = req.body.thread_id || null;
+export default express.Router().use(express.json())
+.post('/askAssistant', async (req: Request, res: Response) => {
+  const { content, assistant_id, thread_id = null } = req.body;
   const [text, t_id] = await openaiAPI.askAssistant(content, assistant_id, thread_id);
-  res.send({text, t_id});
+  res.send({ text, t_id });
+})
+.post('/anotherEndpoint', async (req: Request, res: Response) => {
+  // Handle the request for the second endpoint here
 });
-
-module.exports = router;

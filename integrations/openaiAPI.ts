@@ -215,9 +215,9 @@ export default {
   async askAssistant(
     content: string,
     assistant_id: string,
-    thread_id=null
+    thread_id?: string
   ){
-    const thread = thread_id == null ? await module.exports.newThread() : await module.exports.getThread(thread_id);
+    const thread = thread_id ? await module.exports.newThread() : await module.exports.getThread(thread_id);
     await module.exports.addMessage(content, thread.id);
     const run_id = await module.exports.newRun(thread.id, assistant_id).then((run: { id: any; }) => run.id);
     const response = await module.exports.checkThread(thread.id, run_id);

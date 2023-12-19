@@ -1,6 +1,5 @@
 import openaiAPI from '../../integrations/openaiAPI';
 import dataAPI from '../../integrations/mongoDataAPI';
-const readline = require('readline');
 
 export default {
   async addMessageToThread(
@@ -55,6 +54,7 @@ export default {
 };
 
 async function main() {
+  const readline = require('readline');
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
