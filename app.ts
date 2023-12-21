@@ -7,9 +7,7 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
 
-import viewRouter from './routes/view';
-import openaiRouter from './routes/openai';
-import apiRouter from './routes/api';
+import setupRoutes from './routes';
 
 const app = express();
 
@@ -24,9 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', viewRouter);
-app.use('/openai', openaiRouter);
-app.use('/api', apiRouter);
+setupRoutes(app);
 
 // catch 404 and forward to error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
