@@ -1,6 +1,90 @@
 import { OpenAI } from "openai";
 import dotenv from 'dotenv';
+import { RunStepsPage } from "openai/resources/beta/threads/runs/steps";
 dotenv.config();
+
+interface ApiResponse {
+  body: ApiBody;
+  data: StepData[];
+}
+
+interface ApiBody {
+  object: string;
+  data: StepData[];
+  first_id: string;
+  last_id: string;
+  has_more: boolean;
+}
+
+interface StepData {
+  id: string;
+  object: string;
+  created_at: number;
+  run_id: string;
+  assistant_id: string;
+  thread_id: string;
+  type: string;
+  status: string;
+  cancelled_at: number | null;
+  completed_at: number | null;
+  expires_at: number | null;
+  failed_at: number | null;
+  last_error: string | null;
+  step_details: StepDetails;
+}
+
+interface StepDetails {
+  type: string;
+  message_creation?: {
+    message_id: string;
+  };
+}
+
+interface ThreadRunStep {
+  id: string;
+  object: string;
+  created_at: number;
+  run_id: string;
+  assistant_id: string;
+  thread_id: string;
+  type: string; // Consider using a union type if there are a limited number of known values
+  status: string; // Consider using a union type if there are a limited number of known values
+  cancelled_at: number | null;
+  completed_at: number;
+  expires_at: number | null;
+  failed_at: number | null;
+  last_error: string | null;
+  step_details: StepDetails;
+}
+
+interface Message {
+  id: string;
+  object: string;
+  created_at: number;
+  thread_id: string;
+  role: string; // Consider a union type if there are a limited set of roles (e.g., 'user' | 'assistant')
+  content: Content[];
+  file_ids: string[]; // Array of file ID strings, assuming files can be attached to the message
+  assistant_id: string;
+  run_id: string;
+  metadata: Record<string, unknown>; // Empty object suggests any key-value metadata can be included
+}
+
+interface Content {
+  type: string; // Consider a union type if there is a limited set of content types
+  text: TextContent;
+}
+
+interface TextContent {
+  value: string;
+  annotations: Annotation[]; // Define Annotation interface based on actual structure, if known
+}
+
+// Define the Annotation interface according to the actual structure if needed.
+interface Annotation {
+  // ... properties of an annotation
+}
+
 
 const getClient = (
   apiKey = process.env.OPENAI_API_KEY,
@@ -232,16 +316,16 @@ export default {
   ): Promise<string> {
     while (attempts > 0) {
       console.log("Checking thread - attempts left: " + attempts);
-      const steps = await this.listRunStepsBeta(run_id, thread_id);
-      // const last_step_id = steps.body.first_id;
-      // if (last_step_id != null) {
-      //   const step = await this.getRunStepBeta(run_id, last_step_id, thread_id);
-      //   const message_id = step.step_details?.message_creation.message_id;
-      //   if (step.status === "completed") {
-      //     const message = await this.getMessageBeta(message_id, thread_id);
-      //     return message.content[0].text.value;
-      //   }
-      // }
+      const steps: ApiResponse = await this.listRunStepsBeta(run_id, thread_id) as any;
+      const last_step_id = steps.body.first_id;
+      if (last_step_id != null) {
+        const step: ThreadRunStep = await this.getRunStepBeta(run_id, last_step_id, thread_id) as any;
+        const message_id = step.step_details.message_creation?.message_id || "";
+        if (step.status === "completed") {
+          const message: Message = await this.getMessageBeta(message_id, thread_id) as any;
+          return message.content[0].text.value;
+        }
+      }
       attempts--;
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
