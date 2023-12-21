@@ -1,25 +1,26 @@
 import { OpenAI } from "openai";
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
-function getClient(
-  apiKey=process.env.OPENAI_API_KEY,
-  organization=process.env.ORGANIZATION_ID
-) { 
+const getClient = (
+  apiKey = process.env.OPENAI_API_KEY,
+  organization = process.env.ORGANIZATION_ID
+) => { 
   return new OpenAI({apiKey: apiKey, organization: organization});
 };
 
-const systemClient = getClient();
-
 export default {
+  systemClient: getClient(),
+
   async listModels(
-    client=systemClient
+    client=getClient()
   ){
     const list = await client.models.list();
     return list;
   },
 
   async newThreadBeta(
-    client=systemClient
+    client=getClient()
   ){
     const emptyThread = await client.beta.threads.create();
     return emptyThread;
@@ -27,7 +28,7 @@ export default {
 
   async getThreadBeta(
     thread_id: string, 
-    client=systemClient
+    client=getClient()
   ){
     const thread = await client.beta.threads.retrieve(thread_id);
     return thread;
@@ -35,7 +36,7 @@ export default {
 
   async listMessagesBeta(
     thread_id: string, 
-    client=systemClient
+    client=getClient()
   ){
     const response = await client.beta.threads.messages.list(
       thread_id
@@ -46,7 +47,7 @@ export default {
   async getMessageBeta(
     message_id: string, 
     thread_id: string, 
-    client=systemClient
+    client=getClient()
   ){
     const message = await client.beta.threads.messages.retrieve(
       thread_id, 
@@ -58,7 +59,7 @@ export default {
   async addMessageBeta(
     content: string, 
     thread_id: string, 
-    client=systemClient
+    client=getClient()
   ){
     const response = await client.beta.threads.messages.create(
       thread_id,
@@ -70,7 +71,7 @@ export default {
   async newRunBeta(
     thread_id: string, 
     assistant_id: string, 
-    client=systemClient
+    client=getClient()
   ){
     assistant_id = assistant_id ?? process.env.ASSISTANT_ID;
     const run = await client.beta.threads.runs.create(
@@ -82,7 +83,7 @@ export default {
 
   async listRunsBeta(
     thread_id: string, 
-    client=systemClient
+    client=getClient()
   ){
     const runs = await client.beta.threads.runs.list(
       thread_id
@@ -93,7 +94,7 @@ export default {
   async getRunBeta(
     run_id: string,
     thread_id: string,
-    client=systemClient
+    client=getClient()
   ){
     const run = await client.beta.threads.runs.retrieve(
       thread_id, 
@@ -105,7 +106,7 @@ export default {
   async listRunStepsBeta(
     run_id: string, 
     thread_id: string, 
-    client=systemClient
+    client=getClient()
   ){
     const runSteps = await client.beta.threads.runs.steps.list(
       thread_id,
@@ -118,7 +119,7 @@ export default {
     run_id: string, 
     step_id: string, 
     thread_id: string, 
-    client=systemClient
+    client=getClient()
   ){
     const runStep = await client.beta.threads.runs.steps.retrieve(
       thread_id,
@@ -135,7 +136,7 @@ export default {
     max_tokens=4096,
     n=1,
     temperature=0.8,
-    client=systemClient
+    client=getClient()
   ){
     const response = await client.chat.completions.create({
       messages: [...messages,
@@ -156,7 +157,7 @@ export default {
     max_tokens=4096,
     n=1,
     temperature=0.8,
-    client=systemClient
+    client=getClient()
   ){
     const response = await client.chat.completions.create({
       messages: [{role: "system", content: system_instructions},
@@ -177,7 +178,7 @@ export default {
     max_tokens=4096,
     n=1,
     temperature=0.8,
-    client=systemClient
+    client=getClient()
   ){
     const response = await client.chat.completions.create({
       messages: [...messages,
@@ -198,7 +199,7 @@ export default {
     max_tokens=4096,
     n=1,
     temperature=0.8,
-    client=systemClient
+    client=getClient()
   ){
     const response = await client.chat.completions.create({
       messages: [{role: "user", content: `<system_instructions>${system_instructions}</system_instructions>`},
@@ -217,30 +218,30 @@ export default {
     assistant_id: string,
     thread_id?: string
   ){
-    const thread = thread_id ? await module.exports.newThread() : await module.exports.getThread(thread_id);
-    await module.exports.addMessage(content, thread.id);
-    const run_id = await module.exports.newRun(thread.id, assistant_id).then((run: { id: any; }) => run.id);
-    const response = await module.exports.checkThread(thread.id, run_id);
+    const thread = !thread_id ? await this.newThreadBeta() : await this.getThreadBeta(thread_id);
+    await this.addMessageBeta(content, thread.id);
+    const run_id = await this.newRunBeta(thread.id, assistant_id).then((run: { id: any; }) => run.id);
+    const response = await this.checkThread(thread.id, run_id);
     return [response, thread.id];
   },
 
   async checkThread(
     thread_id: string, 
     run_id: string, 
-    attempts=90
-  ){
+    attempts = 90
+  ): Promise<string> {
     while (attempts > 0) {
       console.log("Checking thread - attempts left: " + attempts);
-      const steps = await module.exports.listRunSteps(run_id, thread_id);
-      const last_step_id = steps.body.first_id;
-      if (!(last_step_id == null)) {
-        const step = await module.exports.getRunStep(run_id, last_step_id, thread_id);
-        const message_id = step.step_details.message_creation.message_id;
-        if (step.status === "completed") {
-          const message = await module.exports.getMessage(message_id, thread_id);
-          return message.content[0].text.value
-        }
-      }
+      const steps = await this.listRunStepsBeta(run_id, thread_id);
+      // const last_step_id = steps.body.first_id;
+      // if (last_step_id != null) {
+      //   const step = await this.getRunStepBeta(run_id, last_step_id, thread_id);
+      //   const message_id = step.step_details?.message_creation.message_id;
+      //   if (step.status === "completed") {
+      //     const message = await this.getMessageBeta(message_id, thread_id);
+      //     return message.content[0].text.value;
+      //   }
+      // }
       attempts--;
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
