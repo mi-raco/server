@@ -1,6 +1,5 @@
 import { OpenAI } from "openai";
 import dotenv from 'dotenv';
-import { RunStepsPage } from "openai/resources/beta/threads/runs/steps";
 dotenv.config();
 
 interface ApiResponse {
@@ -84,7 +83,6 @@ interface TextContent {
 interface Annotation {
   // ... properties of an annotation
 }
-
 
 const getClient = (
   apiKey = process.env.OPENAI_API_KEY,
