@@ -1,6 +1,6 @@
 import { expect, sinon } from './testSetup'
 import { OpenAI } from 'openai';
-import openaiAPI from '../integrations/openaiAPI';
+import openaiAPI from '../services/integrations/openaiAPI';
 
 describe('OpenAI API functions', () => {
   let mockClient: OpenAI;

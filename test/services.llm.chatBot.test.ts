@@ -1,5 +1,5 @@
 import { expect } from './testSetup'
-import chatBot from '../services/llm/chatBot';
+import chatBot from '../services/threads';
 
 describe('chat service', () => {
   it('adds a message to a thread', async () => {

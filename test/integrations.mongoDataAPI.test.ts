@@ -1,5 +1,5 @@
 import { expect } from './testSetup'
-import dataAPI from '../integrations/mongoDataAPI';
+import dataAPI from '../services/integrations/mongoDataAPI';
 
 describe('MongoDB Data API functions', () => {
   it('findOne returns something', async () => {
