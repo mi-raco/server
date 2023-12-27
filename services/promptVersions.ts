@@ -1,4 +1,3 @@
-import chatBot from './threads';
 import dataAPI from './integrations/mongoDataAPI';
 
 export interface PromptVersion {
@@ -16,6 +15,13 @@ export default {
     )
     .then((response) => response.document as PromptVersion);
     return promptVersion;
-  }
+  },
+
+  populateUserInputTemplate(promptVersion: PromptVersion, parameters: Record<string, string>) {
+  const user_input = promptVersion.user_input_template.replace(
+    /\${(\w+)}/g, 
+    (_, v) => parameters[v]
+  );
+    return user_input;
+  },
 }
-  
