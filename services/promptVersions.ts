@@ -9,10 +9,10 @@ export interface PromptVersion {
 
 export default {
   async getLivePromptVersion(actionId: string, data=dataAPI): Promise<PromptVersion> {
-    const promptVersion = data.findOne(
-      'promptVersions', 
-      {actionId: actionId, status: "Live"}
-    )
+    const promptVersion = data.findOne({
+      collection: 'promptVersions', 
+      filter: {action_id: actionId, status: "Live"}
+    })
     .then((response) => response.document as PromptVersion);
     return promptVersion;
   },

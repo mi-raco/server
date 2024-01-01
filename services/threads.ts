@@ -8,16 +8,22 @@ export default {
     data=dataAPI
     ){
     const filter={"_id": {"$oid": thread_id }}
-    const thread = await data.findOne("threads", filter);
-    thread.document.messages.push({content,role});
+    const thread = await data.findOne({
+      collection: "threads", 
+      filter: filter
+    }).then((response) => response.document);
+    thread.messages.push({content,role});
     const update = {"$set": {"messages": thread.document.messages}};
     const response = await data.updateOne('threads', filter, update);
     return response;
   },
 
   async newThread(data=dataAPI) {
-    const response = await data.insertOne('threads', {
-      messages: []
+    const response = await data.insertOne({
+      collection: 'threads', 
+      document: {
+        messages: []
+      }
     });
     return response;
   },

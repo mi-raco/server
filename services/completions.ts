@@ -1,6 +1,7 @@
 import openaiAPI from './integrations/openaiAPI';
 import dataAPI from './integrations/mongoDataAPI';
 import threads from './threads';
+import { Collection } from 'mongodb';
 
 export default {
   async requestCompletion(
@@ -9,7 +10,10 @@ export default {
     openAICompletionStrategy: Function
     ){
     const filter={"_id": {"$oid": thread_id }}
-    const thread = await dataAPI.findOne("threads", filter).then((response) => response.document);
+    const thread = await dataAPI.findOne({
+      collection: "threads", 
+      filter: filter
+    }).then((response) => response.document);
     const completion = await openAICompletionStrategy(system_instructions, thread.messages)
     await threads.addMessageToThread(completion, "assistant", thread_id)
     return completion;

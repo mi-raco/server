@@ -2,7 +2,10 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 dotenv.config();
 
-interface RequestData {
+const BASE_URL: string = process.env.MONGO_DATA_API_BASE_URL || '';
+const API_KEY: string = process.env.MONGO_DATA_API_KEY || '';
+
+export interface RequestData {
   dataSource?: string;
   database?: string;
   collection: string;
@@ -18,8 +21,17 @@ interface RequestData {
   pipeline?: Record<string, unknown>[];
 }
 
-const BASE_URL: string = process.env.MONGO_DATA_API_BASE_URL || '';
-const API_KEY: string = process.env.MONGO_DATA_API_KEY || '';
+export const dataMap: Record<string, Function> = {
+  findOne: module.exports.findOne,
+  find: module.exports.find,
+  insertOne: module.exports.insertOne,
+  insertMany: module.exports.insertMany,
+  updateOne: module.exports.updateOne,
+  updateMany: module.exports.updateMany,
+  deleteOne: module.exports.deleteOne,
+  deleteMany: module.exports.deleteMany,
+  aggregate: module.exports.aggreagate
+}
 
 async function makeRequest(path: string, data: RequestData) {
   const url = `${BASE_URL}${path}`;
@@ -45,67 +57,32 @@ async function makeRequest(path: string, data: RequestData) {
 }
 
 export default {
-  async findOne(
-    collection: string, 
-    filter?: Record<string, unknown>, 
-    projection?: Record<string, unknown>
-    ) {
-      const path = '/action/findOne';
-      const body: RequestData = {
-        collection,
-        filter,
-        projection
-      };
-      return makeRequest(path, body);
-    },
+  async findOne(body: RequestData){
+    const path = '/action/findOne';
+    return makeRequest(path, body);
+  },
 
-  async find(
-    collection: string, 
-    filter: Record<string, unknown>, 
-    projection: Record<string, unknown>, 
-    sort: Record<string, unknown>, 
-    limit: number, 
-    skip: number
-    ) {
-      const path = '/action/find';
-      const body: RequestData = {
-        collection,
-        filter,
-        projection,
-        sort,
-        limit,
-        skip
-      };
-      return makeRequest(path, body);
-    },
+  async find(body: RequestData){
+    const path = '/action/find';
+    return makeRequest(path, body);
+  },
 
-  async insertOne(
-    collection: string,
-    document: Record<string, unknown>
-    ) {
-      const path = '/action/insertOne';
-      document = document || {};
-      document.created_at = new Date().toISOString();
-      const body: RequestData = {
-        collection,
-        document
-      };
-      return makeRequest(path, body);
-    },
+  async insertOne(body: RequestData){
+    const path = '/action/insertOne';
+    if (body.document) {
+      body.document.created_at = new Date().toISOString();
+    }
+    return makeRequest(path, body);
+  },
 
-  async insertMany(
-    collection: string,
-    documents: Record<string, unknown>[]
-    ) {
-      const path = '/action/insertMany';
-      documents.forEach((document) => {
+  async insertMany(body: RequestData){
+    const path = '/action/insertMany';
+    if (body.documents) {
+      body.documents.forEach((document) => {
         document.created_at = new Date().toISOString();
       });
-      const body: RequestData = {
-        collection,
-        documents
-      };
       return makeRequest(path, body);
+    }
   },
 
   async updateOne(

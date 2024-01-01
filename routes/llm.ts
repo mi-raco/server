@@ -13,5 +13,5 @@ export default express.Router().use(express.json())
     promptVersion.system_instructions,
     parameters.thread_id ?? undefined
   );
-  res.json(response);    
+  res.send(response);    
 });

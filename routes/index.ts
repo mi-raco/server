@@ -1,12 +1,14 @@
 import express from 'express';
-import viewRouter from './view';
+import viewsRouter from './views';
 import openaiRouter from './openai';
-import apiRouter from './api';
+import llmRouter from './llm';
+import dataRouter from './data'
 
 const setupRoutes = (app: express.Application) => {
-  app.use('/', viewRouter);
+  app.use('/views', viewsRouter);
   app.use('/openai', openaiRouter);
-  app.use('/api', apiRouter);
+  app.use('/llm', llmRouter);
+  app.use('/dataAPI', dataRouter);
 };
 
 export default setupRoutes;
