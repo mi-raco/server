@@ -21,18 +21,6 @@ export interface RequestData {
   pipeline?: Record<string, unknown>[];
 }
 
-export const dataMap: Record<string, Function> = {
-  findOne: module.exports.findOne,
-  find: module.exports.find,
-  insertOne: module.exports.insertOne,
-  insertMany: module.exports.insertMany,
-  updateOne: module.exports.updateOne,
-  updateMany: module.exports.updateMany,
-  deleteOne: module.exports.deleteOne,
-  deleteMany: module.exports.deleteMany,
-  aggregate: module.exports.aggreagate
-}
-
 async function makeRequest(path: string, data: RequestData) {
   const url = `${BASE_URL}${path}`;
   const headers = {
@@ -56,99 +44,121 @@ async function makeRequest(path: string, data: RequestData) {
   }
 }
 
+async function findOne(body: RequestData){
+  const path = '/action/findOne';
+  return makeRequest(path, body);
+}
+
+async function find(body: RequestData){
+  const path = '/action/find';
+  return makeRequest(path, body);
+}
+
+async function insertOne(body: RequestData){
+  const path = '/action/insertOne';
+  if (body.document) {
+    body.document.created_at = new Date().toISOString();
+  }
+  return makeRequest(path, body);
+}
+
+async function insertMany(body: RequestData){
+  const path = '/action/insertMany';
+  if (body.documents) {
+    body.documents.forEach((document) => {
+      document.created_at = new Date().toISOString();
+    });
+    return makeRequest(path, body);
+  }
+}
+
+async function updateOne(
+  collection: string,
+  filter: Record<string, unknown>,
+  update: Record<string, unknown>,
+  upsert?: boolean
+  ) {
+    const path = '/action/updateOne';
+    const body: RequestData = {
+      collection,
+      filter,
+      update,
+      upsert
+    };
+    return makeRequest(path, body);
+  }
+
+async function updateMany(
+  collection: string, 
+  filter: Record<string, unknown>, 
+  update: Record<string, unknown>
+  ) {
+    const path = '/action/updateMany';
+    const body: RequestData = {
+      collection,
+      filter,
+      update
+    };
+    return makeRequest(path, body);
+  }
+
+async function deleteOne(
+  collection: string, 
+  filter?: Record<string, unknown>
+  ) {
+    filter = filter ?? {};
+    const path = '/action/deleteOne';
+    const body: RequestData = {
+      collection,
+      filter
+    };
+    return makeRequest(path, body);
+  }
+
+async function deleteMany(
+  collection: string, 
+  filter: Record<string, unknown>
+  ) {
+    const path = '/action/deleteMany';
+    const body: RequestData = {
+      collection,
+      filter
+    };
+    return makeRequest(path, body);
+  }
+
+async function aggregate(
+  collection: string, 
+  pipeline: Record<string, unknown>[]
+  ) {
+    const path = '/action/aggregate';
+    const body: RequestData = {
+      collection,
+      pipeline
+    };
+    return makeRequest(path, body);
+  }
+
+export const dataMap: Record<string, Function> = {
+  "findOne": findOne,
+  "find": find,
+  "insertOne": insertOne,
+  "insertMany": insertMany,
+  "updateOne": updateOne,
+  "updateMany": updateMany,
+  "deleteOne": deleteOne,
+  "deleteMany": deleteMany,
+  "aggregate": aggregate
+}
+
 export default {
-  async findOne(body: RequestData){
-    const path = '/action/findOne';
-    return makeRequest(path, body);
-  },
-
-  async find(body: RequestData){
-    const path = '/action/find';
-    return makeRequest(path, body);
-  },
-
-  async insertOne(body: RequestData){
-    const path = '/action/insertOne';
-    if (body.document) {
-      body.document.created_at = new Date().toISOString();
-    }
-    return makeRequest(path, body);
-  },
-
-  async insertMany(body: RequestData){
-    const path = '/action/insertMany';
-    if (body.documents) {
-      body.documents.forEach((document) => {
-        document.created_at = new Date().toISOString();
-      });
-      return makeRequest(path, body);
-    }
-  },
-
-  async updateOne(
-    collection: string,
-    filter: Record<string, unknown>,
-    update: Record<string, unknown>,
-    upsert?: boolean
-    ) {
-      const path = '/action/updateOne';
-      const body: RequestData = {
-        collection,
-        filter,
-        update,
-        upsert
-      };
-      return makeRequest(path, body);
-    },
-
-  async updateMany(
-    collection: string, 
-    filter: Record<string, unknown>, 
-    update: Record<string, unknown>
-    ) {
-      const path = '/action/updateMany';
-      const body: RequestData = {
-        collection,
-        filter,
-        update
-      };
-      return makeRequest(path, body);
-    },
-
-  async deleteOne(
-    collection: string, 
-    filter?: Record<string, unknown>
-    ) {
-      filter = filter ?? {};
-      const path = '/action/deleteOne';
-      const body: RequestData = {
-        collection,
-        filter
-      };
-      return makeRequest(path, body);
-    },
-
-  async deleteMany(
-    collection: string, 
-    filter: Record<string, unknown>
-    ) {
-      const path = '/action/deleteMany';
-      const body: RequestData = {
-        collection,
-        filter
-      };
-      return makeRequest(path, body);
-    },
-
-  async aggregate(
-    collection: string, 
-    pipeline: Record<string, unknown>[]
-    ) {
-      const path = '/action/aggregate';
-      const body: RequestData = {
-        collection,
-        pipeline
-      };
-      return makeRequest(path, body);
-    }
+  findOne,
+  find,
+  insertOne,
+  insertMany,
+  updateOne,
+  updateMany,
+  deleteOne,
+  deleteMany,
+  aggregate
 };
