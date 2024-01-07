@@ -14,7 +14,7 @@ export default {
     }).then((response) => response.document);
     thread.messages.push({content,role});
     const update = {"messages": thread.messages};
-    const response = await data.updateOne('threads', filter, update);
+    const response = await data.updateOne({collection:'threads', filter, update});
     return response;
   },
 

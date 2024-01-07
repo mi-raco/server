@@ -19,9 +19,7 @@ describe('MongoDB Data API functions', () => {
   });
 
   it('deleteOne deletes a document', async () => {
-    const response = await dataAPI.deleteOne(
-      "threads",
-    );
+    const response = await dataAPI.deleteOne({collection: "threads"});
     console.log(response);
     expect(response).to.exist;
   });

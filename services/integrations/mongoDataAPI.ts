@@ -72,70 +72,28 @@ async function insertMany(body: RequestData){
   }
 }
 
-async function updateOne(
-  collection: string,
-  filter: Record<string, unknown>,
-  update: Record<string, unknown>,
-  upsert?: boolean
-  ) {
+async function updateOne(body: RequestData) {
     const path = '/action/updateOne';
-    const body: RequestData = {
-      collection,
-      filter,
-      update,
-      upsert
-    };
     return makeRequest(path, body);
   }
 
-async function updateMany(
-  collection: string, 
-  filter: Record<string, unknown>, 
-  update: Record<string, unknown>
-  ) {
+async function updateMany(body: RequestData) {
     const path = '/action/updateMany';
-    const body: RequestData = {
-      collection,
-      filter,
-      update
-    };
     return makeRequest(path, body);
   }
 
-async function deleteOne(
-  collection: string, 
-  filter?: Record<string, unknown>
-  ) {
-    filter = filter ?? {};
+async function deleteOne(body: RequestData) {
     const path = '/action/deleteOne';
-    const body: RequestData = {
-      collection,
-      filter
-    };
     return makeRequest(path, body);
   }
 
-async function deleteMany(
-  collection: string, 
-  filter: Record<string, unknown>
-  ) {
+async function deleteMany(body: RequestData) {
     const path = '/action/deleteMany';
-    const body: RequestData = {
-      collection,
-      filter
-    };
     return makeRequest(path, body);
   }
 
-async function aggregate(
-  collection: string, 
-  pipeline: Record<string, unknown>[]
-  ) {
+async function aggregate(body: RequestData) {
     const path = '/action/aggregate';
-    const body: RequestData = {
-      collection,
-      pipeline
-    };
     return makeRequest(path, body);
   }
 
