@@ -1,14 +1,14 @@
 import dataAPI from './integrations/mongoDataAPI';
 
-interface Template {
+export interface Template {
   role: string;
   content: string;
-  name: string | null;
-  function_call: any | null;
-  tool_calls: any | null;
+  name?: string | null;
+  function_call?: any | null;
+  tool_calls?: any | null;
 }
 
-interface ModelConfig {
+export interface ModelConfig {
   model: string;
   temperature: number;
   top_p: number | null;
@@ -19,19 +19,19 @@ interface ModelConfig {
   logit_bias: any | null;
 }
 
-interface PromptVersion {
-  _id: string;
-  created_at: string;
-  created_by_user_id: string;
-  created_by_org_id: string;
-  status: string;
-  provider: string;
-  name: string;
-  description: string;
-  prompt_id: string;
+export interface PromptVersion {
+  _id?: string;
+  created_at?: string;
+  created_by_user_id?: string;
+  created_by_org_id?: string;
+  status?: string;
+  provider?: string;
+  name?: string;
+  description?: string;
+  prompt_id?: string;
   template: Template[];
-  model_config: ModelConfig;
-  template_arg_names: string[];
+  model_config?: ModelConfig;
+  template_arg_names?: string[];
 }
 
 export default {
