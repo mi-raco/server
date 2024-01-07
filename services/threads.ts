@@ -13,7 +13,7 @@ export default {
       filter: filter
     }).then((response) => response.document);
     thread.messages.push({content,role});
-    const update = {"$set": {"messages": thread.document.messages}};
+    const update = {"messages": thread.messages};
     const response = await data.updateOne('threads', filter, update);
     return response;
   },

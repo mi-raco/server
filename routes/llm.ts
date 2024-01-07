@@ -10,8 +10,11 @@ export default express.Router().use(express.json())
   const user_input = promptVersions.populateUserInputTemplate(promptVersion, parameters);
   const response = await completions.createCompletionFromUserInput(
     user_input, 
-    promptVersion.system_instructions,
+    promptVersion.template[0].content,
     parameters.thread_id ?? undefined
   );
+  if (response) {
+    response.completion = JSON.parse(response.completion);
+  }
   res.send(response);    
 });
