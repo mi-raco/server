@@ -21,20 +21,20 @@ export interface RequestData {
   pipeline?: Record<string, unknown>[];
 }
 
-async function makeRequest(path: string, data: RequestData) {
+async function makeRequest(path: string, body: RequestData) {
   const url = `${BASE_URL}${path}`;
   const headers = {
     'Content-Type': 'application/json',
     'Access-Control-Request-Headers': '*',
     'api-key': API_KEY
   };
-  data.dataSource = process.env.MONGO_DATASOURCE;
-  data.database = process.env.MONGO_DATABASE;
+  body.dataSource = body.dataSource ?? process.env.MONGO_DATASOURCE;
+  body.database = body.database ?? process.env.MONGO_DATABASE;
   const options = {
     method:"POST",
     url,
     headers,
-    data
+    data: body
   };
   try {
     const response = await axios(options);
